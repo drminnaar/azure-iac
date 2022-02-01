@@ -1,0 +1,247 @@
+# define general variables
+$random = Get-Random
+$prefix = "sandbox-learn"
+$location = 'australiaeast'
+
+
+
+# 1. create resource group
+$rgName = "$prefix-$random-rg"
+az group create --name $rgName --location $location
+
+
+
+# 2.1 create vnet
+$vnetName = "$prefix-$random-vnet"
+$vnetAddressPrefix = "10.0.0.0/16"
+$appSubnetName = "$prefix-$random-app-subnet"
+$appSubnetAddressPrefix = "10.0.0.0/24"
+
+az network vnet create `
+    --name $vnetName `
+    --resource-group $rgName `
+    --location $location `
+    --address-prefix $vnetAddressPrefix `
+    --subnet-name $appSubnetName `
+    --subnet-prefixes $appSubnetAddressPrefix
+
+# 2.2 create db subnet
+$dbSubnetName = "$prefix-$random-db-subnet"
+$dbSubnetAddressPrefix = "10.0.1.0/24"
+
+az network vnet subnet create `
+    --name $dbSubnetName `
+    --resource-group $rgName `
+    --vnet-name $vnetName `
+    --address-prefixes $dbSubnetAddressPrefix
+
+
+
+# 3.1 create app nsg
+$appNsgName = "$prefix-$random-app-nsg"
+az network nsg create `
+    --name $appNsgName `
+    --resource-group $rgName `
+    --location $location
+
+# 3.2 create rule to allow inbound http traffic
+az network nsg rule create `
+    --name allow-http-all `
+    --description "All inbound internet traffic" `
+    --nsg-name $appNsgName `
+    --resource-group $rgName `
+    --access Allow `
+    --protocol Tcp `
+    --direction Inbound `
+    --priority 100 `
+    --source-address-prefix Internet `
+    --source-port-range "*" `
+    --destination-address-prefix "*" `
+    --destination-port-range 80
+
+# 3.3 create rule to allow inbound ssh traffic
+az network nsg rule create `
+    --name allow-ssh-all `
+    --description "All inbound SSH" `
+    --nsg-name $appNsgName `
+    --resource-group $rgName `
+    --access Allow `
+    --protocol Tcp `
+    --direction Inbound `
+    --priority 300 `
+    --source-address-prefix Internet `
+    --source-port-range "*" `
+    --destination-address-prefix "*" `
+    --destination-port-range 22
+
+# 3.4 associate nsg to app subnet
+az network vnet subnet update `
+    --name $appSubnetName `
+    --resource-group $rgName `
+    --vnet-name $vnetName `
+    --network-security-group $appNsgName
+
+
+
+# 4.1 create db nsg
+$dbNsgName = "$prefix-$random-db-nsg"
+az network nsg create `
+    --name $dbNsgName `
+    --resource-group $rgName `
+    --location $location
+
+# 4.2 allow mongodb traffic
+az network nsg rule create `
+    --name allow-mongo-app `
+    --description "All inbound Mongodb traffic" `
+    --nsg-name $dbNsgName `
+    --resource-group $rgName `
+    --access Allow `
+    --protocol Tcp `
+    --direction Inbound `
+    --priority 100 `
+    --source-address-prefix $appSubnetAddressPrefix `
+    --source-port-range "*" `
+    --destination-address-prefix "*" `
+    --destination-port-range 21017
+
+# 4.3 allow ssh traffic
+az network nsg rule create `
+    --name allow-ssh-all `
+    --description "All inbound SSH" `
+    --nsg-name $dbNsgName `
+    --resource-group $rgName `
+    --access Allow `
+    --protocol Tcp `
+    --direction Inbound `
+    --priority 200 `
+    --source-address-prefix Internet `
+    --source-port-range "*" `
+    --destination-address-prefix "*" `
+    --destination-port-range 22    
+
+# 4.4 block all outgoing traffic
+az network nsg rule create `
+    --name deny-internet-all `
+    --description "Deny all outgoing internet traffic" `
+    --nsg-name $dbNsgName `
+    --resource-group $rgName `
+    --access Deny `
+    --protocol Tcp `
+    --direction Outbound `
+    --priority 300 `
+    --source-address-prefix "*" `
+    --source-port-range "*" `
+    --destination-address-prefix "*" `
+    --destination-port-range "*"
+
+# 4.5 associate nsg to db subnet
+az network vnet subnet update `
+    --name $dbSubnetName `
+    --resource-group $rgName `
+    --vnet-name $vnetName `
+    --network-security-group $dbNsgName
+
+
+# 5.1 create app vm public IP
+$appVmIpName = "$prefix-$random-app-vm-ip"
+az network public-ip create `
+    --name $appVmIpName `
+    --resource-group $rgName
+
+# 5.2 create app vm nic
+$appVmNicName = "$prefix-$random-app-vm-nic"
+az network nic create `
+    --name $appVmNicName `
+    --resource-group $rgName `
+    --vnet-name $vnetName `
+    --subnet $appSubnetName `
+    --network-security-group $appNsgName `
+    --public-ip-address $appVmIpName
+
+# 5.3 create app vm
+$appVmName = "$prefix-$random-app-vm"
+$appVmPassword = "P@ssword$random"
+az vm create `
+    --name $appVmName `
+    --resource-group $rgName `
+    --nics $appVmNicName `
+    --image UbuntuLTS `
+    --size Standard_DS1_v2 `
+    --generate-ssh-keys `
+    --custom-data ./app-vm-init.yml `
+    --no-wait `
+    --admin-user "user$random" `
+    --admin-password $appVmPassword
+
+
+
+# 6.1 create db vm public IP
+$dbVmIpName = "$prefix-$random-db-vm-ip"
+az network public-ip create `
+    --name $dbVmIpName `
+    --resource-group $rgName
+
+# 6.2 create db vm nic
+$dbVmNicName = "$prefix-$random-db-vm-nic"
+az network nic create `
+    --name $dbVmNicName `
+    --resource-group $rgName `
+    --vnet-name $vnetName `
+    --subnet $dbSubnetName `
+    --network-security-group $dbNsgName `
+    --public-ip-address $dbVmIpName
+
+# 5.3 create db vm
+$dbVmName = "$prefix-$random-db-vm"
+$dbVmPassword = "P@ssword$random"
+az vm create `
+    --name $dbVmName `
+    --resource-group $rgName `
+    --nics $dbVmNicName `
+    --image UbuntuLTS `
+    --size Standard_DS1_v2 `
+    --generate-ssh-keys `
+    --no-wait `
+    --admin-user "user$random" `
+    --admin-password $dbVmPassword
+
+
+
+# 6. list vms and their state
+az vm list `
+    --resource-group $rgName `
+    --show-details `
+    --output table `
+    --query "[*].{Name:name, Provisioned:provisioningState, Power:powerState}"
+
+
+
+# 7. list vms and their ip's
+az vm list `
+    --resource-group $rgName `
+    --show-details `
+    --output table `
+    --query "[*].{Name:name, PrivateIP:privateIps, PublicIP:publicIps}"
+
+
+# 8. connect to vms
+$appVmIp = (az vm list-ip-addresses `
+    --resource-group $rgName `
+    --name $appVmName `
+    --output tsv `
+    --query "[].virtualMachine.network.publicIpAddresses[*].ipAddress")
+
+$dbVmIp = (az vm list-ip-addresses `
+    --resource-group $rgName `
+    --name $dbVmName `
+    --output tsv `
+    --query "[].virtualMachine.network.publicIpAddresses[*].ipAddress")
+
+ssh user$random@$appVmIp -o ConnectTimeout=5
+ssh user$random@$dbVmIp -o ConnectTimeout=5
+
+
+
+# remove resource group
+az group delete --name $rgName --no-wait -y
