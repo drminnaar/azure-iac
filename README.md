@@ -42,14 +42,14 @@ A collection of Azure IaC examples demonstrating Azure CLI, Azure Powershell and
   - [Azure Powershell](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create/vnet-create-azpwsh)
   - [Azure Bicep](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create/vnet-create-bicep-part-1)
   - [Azure Bicep using Modules](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create/vnet-create-bicep-part-2)
-- Create Multi-Tier VNet
-  - Azure CLI
-  - Azure Bicep
-- Create Multi-Tier VNet with Virtual Machines
-  - Azure CLI
-  - Azure Bicep
-  - Azure Bicep using modules per tier
-  - Azure Bicep using modules for everything
+- [Create Multi-Tier VNet](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create-multitier)
+  - [Azure CLI](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create-multitier/vnet-create-multitier-using-azcli)
+  - [Azure Bicep](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create-multitier/vnet-create-multitier-using-bicep)
+- [Create Multi-Tier VNet with Virtual Machines](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create-multitier-vm)
+  - [Azure CLI](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create-multitier-vm/vnet-create-multitier-vm-using-azcli)
+  - [Azure Bicep](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create-multitier-vm/vnet-create-multitier-vm-using-bicep-part-1)
+  - [Azure Bicep using modules per tier](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create-multitier-vm/vnet-create-multitier-vm-using-bicep-part-2)
+  - [Azure Bicep using modules for everything](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create-multitier-vm/vnet-create-multitier-vm-using-bicep-part-3)
 
 ---
 
