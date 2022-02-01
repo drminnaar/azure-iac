@@ -1,0 +1,26 @@
+# define variables
+$random = Get-Random
+$rgName = "sandbox-learn-$random-rg"
+$location = "australiaeast"
+$deploymentName = "sandbox-learn-$random-dg"
+
+# create resource group
+az group create --name $rgName --location $location
+
+# deploy bicep template
+az deployment group create `
+    --name $deploymentName `
+    --resource-group $rgName `
+    --template-file ./main.bicep `
+    --output jsonc
+
+# deploy bicep template using what-if
+az deployment group create `
+    --name $deploymentName `
+    --resource-group $rgName `
+    --template-file ./main.bicep `
+    --output jsonc `
+    --confirm-with-what-if
+
+# delete resource group
+az group delete --name $rgName --no-wait -y
