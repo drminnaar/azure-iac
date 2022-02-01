@@ -1,0 +1,39 @@
+# define local variables
+$gitrepo="https://github.com/drminnaar/demowebapp-dotnet.git"
+$random = Get-Random
+$rgName = "aspdemo-$random-rg"
+$location = "australiaeast"
+$appName = "aspdemo-$random-webapp"
+$appSku = "F1"
+$apiVersion = "2020-06-01"
+
+# create resource group
+New-AzResourceGroup -Name $rgName -Location $location
+
+# create appservice plan
+New-AzAppServicePlan -Name $appName -Location $location -ResourceGroupName $rgName -Tier $appSku -Linux
+
+# create webapp
+New-AzWebApp -Name $appName -Location $location -AppServicePlan $appName -ResourceGroupName $rgName
+
+az webapp config show --resource-group $rgName --name $appName --query netFrameworkVersion
+
+# deploy webapp from github repo
+Set-AzWebApp -Name $appName -ResourceGroupName $rgName -AppServicePlan $appName -NetFrameworkVersion 'v6.0'
+
+$config = Get-AzResource -ResourceGroupName $rgName -ResourceType Microsoft.Web/sites/config -ResourceName $appName/web -ApiVersion $apiVersion
+$config.Properties.linuxFxVersion = "DOTNETCORE|6.0"
+$config | Set-AzResource -ApiVersion $apiVersion -Force
+
+$PropertiesObject = @{
+    repoUrl = "$gitrepo";
+    branch = "main";
+    isManualIntegration = "true";
+}
+Set-AzResource -Properties $PropertiesObject -ResourceGroupName $rgName -ResourceType Microsoft.Web/sites/sourcecontrols -ResourceName $appName/web -ApiVersion $apiVersion -Force
+
+# display webpage url
+echo http://$appname.azurewebsites.net
+
+# delete resource group
+Remove-AzResourceGroup -Name $rgName -Force
