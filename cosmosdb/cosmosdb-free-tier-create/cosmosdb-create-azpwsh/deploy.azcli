@@ -1,0 +1,27 @@
+# define variables
+$location = "australiaeast"
+$rgName = "aziac-cosmosdb-rg"
+$uniqueId = Get-Random
+$accountName = "openweather-$uniqueId-cosmosdb"
+$dbName = "weatherdb"
+$enableFreeTier = True
+
+# create resource group
+New-AzResourceGroup -Name $rgName -Location $location
+
+# set appropriate subscription
+Set-AzContext -Subscription $subscriptionNameOrId
+
+# create cosmosdb account
+New-AzCosmosDBAccount -Name $accountName `
+    -ResourceGroupName $rgName `
+    -Location $location `
+    -ApiKind "GlobalDocumentDB" `
+    -EnableFreeTier $enableFreeTier `
+    -DefaultConsistencyLevel "Session"
+
+# delete cosmosdb account
+Remove-AzCosmosDBAccount -ResourceGroupName $rgName -Name $accountName
+
+# delete resource group
+Remove-AzResourceGroup -Name $rgName -Force
