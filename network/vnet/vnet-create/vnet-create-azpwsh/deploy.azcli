@@ -1,0 +1,28 @@
+$random = Get-Random
+$prefix = "aziac-$random"
+$location = "australiaeast"
+
+# create resource group
+$rgName = "$prefix-rg"
+New-AzResourceGroup -Name $rgName -Location $location
+
+# create app subnet
+$appSubnet = New-AzVirtualNetworkSubnetConfig `
+    -Name "$prefix-app-subnet" `
+    -AddressPrefix "10.0.0.0/24"
+
+# create db subnet
+$dbSubnet = New-AzVirtualNetworkSubnetConfig `
+    -Name "$prefix-db-subnet" `
+    -AddressPrefix "10.0.1.0/24"
+
+# create vnet
+$vnet = New-AzVirtualNetwork `
+    -Name "$prefix-vnet" `
+    -ResourceGroupName $rgName `
+    -Location $location `
+    -AddressPrefix "10.0.0.0/16" `
+    -Subnet $appSubnet, $dbSubnet
+
+# remove resource group
+Remove-AzResourceGroup -Name $rgName -Force
