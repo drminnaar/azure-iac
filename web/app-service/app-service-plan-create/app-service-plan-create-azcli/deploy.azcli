@@ -1,0 +1,28 @@
+# define local variables
+$gitrepo="https://github.com/drminnaar/demowebapp-dotnet.git"
+$random = Get-Random
+$rgName = "aspdemo-$random-rg"
+$location = "australiaeast"
+$appName = "aspdemo-$random-webapp"
+$appSku = "F1"
+
+# create resource group
+az group create --name $rgName --location $location
+
+# create appservice plan
+az appservice plan create --name $appName --resource-group $rgName --sku $appSku --is-linux
+
+# create webapp
+$webapp = az webapp create --name $appName --resource-group $rgName --plan $appName --runtime '"DOTNETCORE|6.0"'
+
+# show webapp config
+az webapp config show --resource-group $rgName --name $appName
+
+# deploy webapp from github repo
+az webapp deployment source config --name $appName --resource-group $rgName --repo-url $gitrepo --branch main --manual-integration
+
+# display webpage url
+echo http://$appname.azurewebsites.net
+
+# delete resource group
+az group delete --name $rgName -y
