@@ -1,0 +1,36 @@
+# Create a vnet with 2 subnets (application and database subnet)
+
+$random = Get-Random
+$prefix = "aziac-$random"
+$location = "australiaeast"
+echo $prefix
+
+# create resource group
+$rgName = "$prefix-rg"
+az group create --name $rgName --location $location
+
+# create vnet with app subnet
+$vnetName = "$prefix-vnet"
+$vnetAddressPrefix = "10.0.0.0/16"
+$appSubnetName = "$prefix-app-subnet"
+$appSubnetAddressPrefix = "10.0.0.0/24"
+
+az network vnet create `
+    --name $vnetName `
+    --resource-group $rgName `
+    --address-prefixes $vnetAddressPrefix `
+    --subnet-name $appSubnetName `
+    --subnet-prefixes $appSubnetAddressPrefix
+
+# create db subnet
+$dbSubnetName = "$prefix-db-subnet"
+$dbSubnetAddressPrefix = "10.0.1.0/24"
+
+az network vnet subnet create `
+    --resource-group $rgName `
+    --vnet-name $vnetName `
+    --name $dbSubnetName `
+    --address-prefixes $dbSubnetAddressPrefix
+
+# remove resource group
+az group delete --name $rgName
