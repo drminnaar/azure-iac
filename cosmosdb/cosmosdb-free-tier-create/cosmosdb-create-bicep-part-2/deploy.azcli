@@ -1,0 +1,20 @@
+# define variables
+$location = "australiaeast"
+
+
+# deploy bicep template without confirmation
+$deployment = $(az deployment sub create --location $location --template-file ./main.bicep)
+
+
+# get output properties
+$rgName = $deployment | jq ".properties.outputs.resourceGroupName.value"
+$accountName = $deployment | jq ".properties.outputs.accountName.value"
+$dbName = $deployment | jq ".properties.outputs.dbName.value"
+
+
+# display output properties
+echo "Resource Group: $rgName, Account Name: $accountName, Database: $dbName"
+
+
+# delete resource group
+az group delete --name $rgName -y
