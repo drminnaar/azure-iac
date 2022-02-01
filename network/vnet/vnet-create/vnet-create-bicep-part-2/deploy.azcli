@@ -1,0 +1,18 @@
+# define variables
+$location = 'australiaeast'
+
+# Instruct the command to run deployment What-If
+# before executing the deployment. It then prompts
+# you to acknowledge resource changes before it
+# continues.
+az deployment sub create `
+    --location $location `
+    --template-file ./main.bicep `
+    --confirm-with-what-if
+
+# deploy bicep template without confirmation
+$deployment = $(az deployment sub create --location $location --template-file ./main.bicep --output jsonc)
+
+# cleanup
+$rgName = $deployment | jq ".properties.outputs.resourceGroupName.value"
+az group delete --name $rgName -y
