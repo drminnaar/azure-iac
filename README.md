@@ -24,12 +24,12 @@ A collection of Azure IaC examples demonstrating Azure CLI, Azure Powershell and
 
 ## CosmosDB
 
-- Create Free-Tier CosmosDB
+- [Create Free-Tier CosmosDB](https://github.com/drminnaar/azure-iac/tree/main/cosmosdb/cosmosdb-free-tier-create)
 
-  - Azure CLI
-  - Azure Powershell
-  - Azure Bicep
-  - Azure Bicep using Modules
+  - [Azure CLI](https://github.com/drminnaar/azure-iac/tree/main/cosmosdb/cosmosdb-free-tier-create/cosmosdb-create-azcli)
+  - [Azure Powershell](https://github.com/drminnaar/azure-iac/tree/main/cosmosdb/cosmosdb-free-tier-create/cosmosdb-create-azpwsh)
+  - [Azure Bicep](https://github.com/drminnaar/azure-iac/tree/main/cosmosdb/cosmosdb-free-tier-create/cosmosdb-create-bicep-part-1)
+  - [Azure Bicep using Modules](https://github.com/drminnaar/azure-iac/tree/main/cosmosdb/cosmosdb-free-tier-create/cosmosdb-create-bicep-part-2)
 
 ---
 
@@ -37,21 +37,19 @@ A collection of Azure IaC examples demonstrating Azure CLI, Azure Powershell and
 
 ### VNet
 
-- Create VNet
-  - Azure CLI
-  - Azure Powershell
-  - Azure Bicep
-  - Azure Bicep using Modules
+- [Create VNet](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create)
+  - [Azure CLI](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create/vnet-create-azcli)
+  - [Azure Powershell](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create/vnet-create-azpwsh)
+  - [Azure Bicep](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create/vnet-create-bicep-part-1)
+  - [Azure Bicep using Modules](https://github.com/drminnaar/azure-iac/tree/main/network/vnet/vnet-create/vnet-create-bicep-part-2)
 - Create Multi-Tier VNet
   - Azure CLI
-  - Azure Powershell
   - Azure Bicep
-  - Azure Bicep using Modules
 - Create Multi-Tier VNet with Virtual Machines
   - Azure CLI
-  - Azure Powershell
   - Azure Bicep
-  - Azure Bicep using Modules
+  - Azure Bicep using modules per tier
+  - Azure Bicep using modules for everything
 
 ---
 
@@ -59,11 +57,11 @@ A collection of Azure IaC examples demonstrating Azure CLI, Azure Powershell and
 
 ### App Service
 
-- Create App Service Plan
+- [Create App Service Plan](https://github.com/drminnaar/azure-iac/tree/main/web/app-service/app-service-plan-create)
 
-  - Azure CLI
-  - Azure Powershell
-  - Azure Bicep
-  - Azure Bicep using Modules
+  - [Azure CLI](https://github.com/drminnaar/azure-iac/tree/main/web/app-service/app-service-plan-create/app-service-plan-create-azcli)
+  - [Azure Powershell](https://github.com/drminnaar/azure-iac/tree/main/web/app-service/app-service-plan-create/app-service-plan-create-azpwsh)
+  - [Azure Bicep](https://github.com/drminnaar/azure-iac/tree/main/web/app-service/app-service-plan-create/app-service-plan-create-bicep-part-1)
+  - [Azure Bicep using Modules](https://github.com/drminnaar/azure-iac/tree/main/web/app-service/app-service-plan-create/app-service-plan-create-bicep-part-2)
 
   ---
