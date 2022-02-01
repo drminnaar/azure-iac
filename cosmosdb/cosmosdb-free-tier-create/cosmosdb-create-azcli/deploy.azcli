@@ -1,0 +1,28 @@
+# define variables
+$location = "australiaeast"
+$rgName = "aziac-cosmosdb-rg"
+
+$uniqueId = Get-Random
+$accountName = "openweather-$uniqueId-cosmosdb"
+$dbName = "weatherdb"
+
+# create resource group
+az group create --name $rgName --location $location
+
+# get subscriptionId
+$subscriptionId=$(az account list --query [0].id --output tsv)
+
+# create cosmosdb account
+az cosmosdb create `
+    --subscription $subscriptionId `
+    --name $accountName `
+    --kind GlobalDocumentDB `
+    --resource-group $rgName `
+    --default-consistency-level Session `
+    --enable-free-tier
+
+# delete cosmosdb account
+az cosmosdb delete --name $accountName --resource-group $rgName -y
+
+# delete resource group
+az group delete --name $rgName -y
