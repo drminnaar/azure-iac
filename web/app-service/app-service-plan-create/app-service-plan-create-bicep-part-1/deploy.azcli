@@ -1,0 +1,36 @@
+# set working directory
+cd web\app-service\app-service-plan-create\part-3-bicep
+
+# [OPTIONAL] - build main.bicep to generate ARM template
+az bicep build --file ./main.bicep
+
+# define variables
+$websiteName = "dotnethelloworld"
+$rgName = "$websiteName-rg"
+$deploymentName = "$websiteName-deployment"
+$location = "australiaeast"
+$repoUrl = "https://github.com/drminnaar/demowebapp-dotnet.git"
+
+# create resource group
+az group create --name $rgName --location $location
+
+# Instruct the command to run deployment What-If
+# before executing the deployment. It then prompts
+# you to acknowledge resource changes before it
+# continues.
+az deployment group create --name $deploymentName `
+    --resource-group $rgName `
+    --template-file ./main.bicep `
+    --parameters websiteName=$websiteName `
+    --parameters repoUrl=$repoUrl `
+    --confirm-with-what-if
+
+# deploy bicep template
+az deployment group create --name $deploymentName `
+    --resource-group $rgName `
+    --template-file ./main.bicep `
+    --parameters websiteName=$websiteName `
+    --parameters repoUrl=$repoUrl
+
+# cleanup
+az group delete --name $rgName -y
