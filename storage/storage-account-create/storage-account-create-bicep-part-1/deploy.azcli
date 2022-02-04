@@ -1,0 +1,20 @@
+$random = Get-Random
+$appNamePrefix = "aziac-$random"
+$location = "australiaeast"
+
+# create resource group
+$rgName = "$appNamePrefix-rg"
+az group create --name $rgName --location $location
+
+# deploy bicep template
+$deployment = (az deployment group create `
+    --name $deploymentName `
+    --resource-group $rgName `
+    --template-file ./main.bicep `
+    --parameters appNamePrefix=$appNamePrefix)
+
+# display storage account name
+echo "Storage Account Created: $($deployment | jq '.properties.outputs.storageAccountName.value')"
+
+# delete resource group
+az group delete --name $rgName -y

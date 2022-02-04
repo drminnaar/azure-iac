@@ -1,0 +1,20 @@
+$random = Get-Random
+$appNamePrefix = "aziac-$random"
+$location = "australiaeast"
+
+# create resource group
+$rgName = "$appNamePrefix-rg"
+New-AzResourceGroup -Name $rgName -Location $location
+
+# create storage account
+$staName = ($appNamePrefix + "sta").Replace("-", "")
+New-AzStorageAccount `
+    -ResourceGroupName $rgName `
+    -Name $staName `
+    -Location $location `
+    -Kind "StorageV2" `
+    -AccessTier "Hot" `
+    -SkuName "Standard_LRS"
+
+# delete resource group
+Remove-AzResourceGroup -Name $rgName -y
