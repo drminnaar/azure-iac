@@ -1,0 +1,16 @@
+# define variables
+$random = Get-Random
+$location = "australiaeast"
+$deploymentName = "aziac-$random-dg"
+$appNamePrefix = "aziac-$random"
+
+# deploy bicep template
+$deployment = (az deployment sub create `
+    --name $deploymentName `
+    --location $location `
+    --template-file ./main.bicep `
+    --parameters appNamePrefix=$appNamePrefix)
+
+# delete resource group
+$rgName = $deployment | jq ".properties.outputs.resourceGroupName.value"
+az group delete --name $rgName -y

@@ -1,0 +1,21 @@
+# define variables
+$random = Get-Random
+$rgName = "aziac-$random-rg"
+$location = "australiaeast"
+$deploymentName = "aziac-$random-dg"
+$appNamePrefix = "aziac-$random"
+
+# create resource group
+az group create --name $rgName --location $location
+
+# deploy bicep template
+az deployment group create `
+    --name $deploymentName `
+    --resource-group $rgName `
+    --template-file ./main.bicep `
+    --parameters appNamePrefix=$appNamePrefix `
+    --output jsonc `
+    --what-if
+
+# delete resource group
+az group delete --name $rgName -y

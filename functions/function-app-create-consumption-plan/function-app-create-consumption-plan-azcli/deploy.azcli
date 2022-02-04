@@ -1,0 +1,33 @@
+$random = Get-Random
+$appNamePrefix = "aziac-$random"
+$location = "australiaeast"
+
+# create resource group
+$rgName = "$appNamePrefix-rg"
+az group create --name $rgName --location $location
+
+# create storage account
+$staName = ($appNamePrefix + "sta").Replace("-", "")
+az storage account create `
+    --resource-group $rgName `
+    --name $staName `
+    --location $location `
+    --kind StorageV2 `
+    --access-tier Hot `
+    --sku Standard_LRS
+
+# create function app
+# this creates function app using a consumption plan (sku: Y1, tier: dynamic)
+# functions-version: 4 indicates that 'dotnet 6.0 (lts)' is used
+$funcAppName = "$appNamePrefix-fapp"
+az functionapp create `
+    --name $funcAppName `
+    --resource-group $rgName `
+    --storage-account $staName `
+    --functions-version 4 `
+    --consumption-plan-location $location `
+    --os-type Linux `
+    --runtime dotnet
+
+# delete resource group
+az group delete --name $rgName -y
