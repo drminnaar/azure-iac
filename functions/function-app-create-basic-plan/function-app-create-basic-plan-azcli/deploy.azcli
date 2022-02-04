@@ -1,0 +1,35 @@
+$random = Get-Random
+$appNamePrefix = "aziac-$random"
+$location = "australiaeast"
+
+# create resource group
+$rgName = "$appNamePrefix-rg"
+az group create --name $rgName --location $location
+
+# create storage account
+$staName = ($appNamePrefix + "sta").Replace("-", "")
+az storage account create `
+    --resource-group $rgName `
+    --name $staName `
+    --location $location `
+    --kind StorageV2 `
+    --access-tier Hot `
+    --sku Standard_LRS
+
+# create appservice plan
+$aspName = "$appNamePrefix-asp"
+az appservice plan create --name $aspName --resource-group $rgName --sku B1 --is-linux
+
+# create function app
+$funcAppName = "$appNamePrefix-fapp"
+az functionapp create `
+    --name $funcAppName `
+    --resource-group $rgName `
+    --storage-account $staName `
+    --functions-version 4 `
+    --plan $aspName `
+    --os-type Linux `
+    --runtime dotnet
+
+# delete resource group
+az group delete --name $rgName -y
