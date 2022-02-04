@@ -3,7 +3,6 @@
 $random = Get-Random
 $prefix = "aziac-$random"
 $location = "australiaeast"
-echo $prefix
 
 # create resource group
 $rgName = "$prefix-rg"
