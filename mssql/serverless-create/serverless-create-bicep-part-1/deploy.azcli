@@ -1,0 +1,32 @@
+# Define variables
+
+$random = Get-Random
+$prefix = "aziac-$random"
+$location = "australiaeast"
+$deploymentName = "$prefix-dg"
+
+# create resource group
+$rgName = "$prefix-rg"
+az group create --name $rgName --location $location
+
+# deploy bicep template
+$serverName = "aziac-server"
+$databaseName = "aziac-database"
+$publicNetworkAccess = "Enabled"
+$administratorLogin = "drevil"
+$administratorLoginPassword = "P@ssword-$random"
+
+az deployment group create `
+    --name $deploymentName `
+    --resource-group $rgName `
+    --template-file ./main.bicep `
+    --parameters `
+        serverName=$serverName `
+        databaseName=$databaseName `
+        publicNetworkAccess=$publicNetworkAccess `
+        administratorLogin=$administratorLogin `
+        administratorLoginPassword=$administratorLoginPassword `
+    --output jsonc
+
+# delete resource group
+az group delete --name $rgName -y
