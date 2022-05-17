@@ -79,6 +79,19 @@ Try the [Bicep Playground](https://aka.ms/bicepdemo) to experiment with and lear
 
 ---
 
+## MSSQL
+
+### General Purpose Serverless
+
+- [Create SQL Server + Database + FW Rules](https://github.com/drminnaar/azure-iac/tree/main/mssql/serverless-create)
+
+  - [Azure CLI](https://github.com/drminnaar/azure-iac/tree/main/mssql/serverless-create/serverless-create-azcli)
+  - [Azure Powershell](https://github.com/drminnaar/azure-iac/tree/main/mssql/serverless-create/serverless-create-azpwsh)
+  - [Azure Bicep](https://github.com/drminnaar/azure-iac/tree/main/mssql/serverless-create/serverless-create-bicep-part-1)
+  - [Azure Bicep using modules](https://github.com/drminnaar/azure-iac/tree/main/mssql/serverless-create/serverless-create-bicep-part-2)
+
+---
+
 ## Networking
 
 ### VNet
