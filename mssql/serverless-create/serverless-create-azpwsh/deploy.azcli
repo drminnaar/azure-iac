@@ -1,0 +1,50 @@
+# Define variables
+
+$random = Get-Random
+$prefix = "aziac"
+$location = "australiaeast"
+$serverName = "$prefix-server"
+$databaseName = "$prefix-database"
+$administratorLogin = "drevil"
+$administratorLoginPassword = "P@ssword-$random"
+
+# create resource group
+
+$resourceGroupName = "$prefix-rg"
+New-AzResourceGroup -Name $resourceGroupName -Location $location
+
+# create sql server
+
+$credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $administratorLogin, $(ConvertTo-SecureString -String $administratorLoginPassword -AsPlainText -Force)
+New-AzSqlServer -ResourceGroupName $resourceGroupName `
+    -ServerName $serverName `
+    -Location $location `
+    -SqlAdministratorCredentials $credentials `
+    -PublicNetworkAccess 'Enabled'
+
+# assign firewall rules
+
+New-AzSqlServerFirewallRule -ResourceGroupName $resourceGroupName `
+    -ServerName $serverName `
+    -FirewallRuleName "AllowAllAzureIps" `
+    -StartIpAddress "0.0.0.0" `
+    -EndIpAddress "0.0.0.0"
+
+New-AzSqlServerFirewallRule -ResourceGroupName $resourceGroupName `
+    -ServerName $serverName `
+    -FirewallRuleName "AllowMyIp" `
+    -StartIpAddress "<enter_your_ip>" `
+    -EndIpAddress "<enter_your_ip>"
+
+# create sql database
+
+New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
+    -ServerName $serverName `
+    -DatabaseName $databaseName `
+    -Edition GeneralPurpose `
+    -ComputeModel Serverless `
+    -ComputeGeneration Gen5 `
+    -VCore 1 `
+    -MinimumCapacity 1 `
+    -AutoPauseDelayInMinutes 60 `
+    -SampleName "AdventureWorksLT"
