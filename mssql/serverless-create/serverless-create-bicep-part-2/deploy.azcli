@@ -1,0 +1,32 @@
+# Define variables
+
+$random = Get-Random
+$prefix = "aziac-$random"
+$deploymentName = "$prefix-dg"
+$location = "australiaeast"
+
+# define parameters
+
+$rgName = "$prefix-rg"
+$serverName = "aziac-server"
+$databaseName = "aziac-database"
+$administratorLogin = "drevil"
+$administratorLoginPassword = "P@ssword-$random"
+
+# deploy bicep template
+
+$deployment = (az deployment sub create `
+    --name $deploymentName `
+    --location $location `
+    --template-file ./main.bicep `
+    --parameters `
+        resourceGroupName=$rgName `
+        serverName=$serverName `
+        databaseName=$databaseName `
+        administratorLogin=$administratorLogin `
+        administratorLoginPassword=$administratorLoginPassword)
+
+echo $deployment | ConvertFrom-Json | jq
+
+# delete resource group
+az group delete --name $rgName -y
